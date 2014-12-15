@@ -1,14 +1,22 @@
-cmake_minimum_required(VERSION 2.8.4)
-project(big_integer)
+cmake_minimum_required(VERSION 2.8)
 
-set(SOURCE_FILES
-    main.cpp
-    BigInteger.cpp
-    exception.cpp
-    )
+project(BIGINTEGER)
 
-set(HEADERS
-    BigInteger.h
-    )
+include_directories(${BIGINTEGER_SOURCE_DIR})
 
-add_executable(big_integer ${SOURCE_FILES})
+add_executable(	BigInteger
+				BigInteger.h
+				BigInteger.cpp
+				exception.cpp
+				main.cpp)
+
+add_executable(	BigIntegerTest
+				BigIntegerTest.cpp
+				BigInteger.h
+				BigInteger.cpp
+				exception.cpp
+				main.cpp
+				gtest/gtest-all.cc
+				gtest/gtest.h)
+
+target_link_libraries(BigIntegerTest -lgmp -lgmpxx -lpthread)
