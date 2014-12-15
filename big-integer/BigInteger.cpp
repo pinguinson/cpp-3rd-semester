@@ -1,15 +1,15 @@
 #include <string>
-#include "BigInt.h"
+#include "BigInteger.h"
 #include <cmath>
 #include "exception.cpp"
 
-BigInt::BigInt() {
+BigInteger::BigInteger() {
     value.clear();
     value.push_back(0);
     sign = true;
 }
 
-BigInt::BigInt(int a) {
+BigInteger::BigInteger(int a) {
     long long number = a;
     sign = number > 0;
     value.clear();
@@ -26,7 +26,7 @@ BigInt::BigInt(int a) {
     }
 }
 
-std::string to_string(BigInt const &a) {
+std::string to_string(BigInteger const &a) {
     unsigned int length = a.value.size() + !a.sign;
     char number[a.value.size() + !a.sign];
     int cur = 0;
@@ -42,7 +42,7 @@ std::string to_string(BigInt const &a) {
     return ans.substr(0, length);
 }
 
-BigInt::BigInt(std::string number) {
+BigInteger::BigInteger(std::string number) {
     if (number.size() == 0)
         throw parse_exception("Empty string");
     int end = 0;
@@ -62,26 +62,26 @@ BigInt::BigInt(std::string number) {
     }
 }
 
-BigInt::BigInt(BigInt const &copy) {
+BigInteger::BigInteger(BigInteger const &copy) {
     value = copy.value;
     sign = copy.sign;
 }
 
-void BigInt::setSign(bool s) {
+void BigInteger::setSign(bool s) {
     sign = s;
 }
 
-const bool &BigInt::getSign() {
+const bool &BigInteger::getSign() {
     return sign;
 }
 
-const BigInt& BigInt::operator = (BigInt const& other) {
+const BigInteger& BigInteger::operator = (BigInteger const& other) {
     value = other.value;
     sign = other.sign;
     return *this;
 }
 
-const BigInt& BigInt::operator+=(BigInt const& rhs) {
+const BigInteger& BigInteger::operator+=(BigInteger const& rhs) {
     if (sign == rhs.sign) {
         add(rhs);
         return *this;
@@ -90,21 +90,21 @@ const BigInt& BigInt::operator+=(BigInt const& rhs) {
         sub(rhs);
         return *this;
     }
-    BigInt buff = rhs;
+    BigInteger buff = rhs;
     buff.sub(*this);
     *this = buff;
     return *this;
 }
 
-const BigInt& BigInt::operator-=(BigInt const& rhs) {
-    BigInt r = rhs;
+const BigInteger& BigInteger::operator-=(BigInteger const& rhs) {
+    BigInteger r = rhs;
     r.setSign(!r.getSign());
     return (*this) += r;
 }
 
-const BigInt& BigInt::operator*=(BigInt const& rhs) {
+const BigInteger& BigInteger::operator*=(BigInteger const& rhs) {
     bool newSign = (sign == rhs.sign);
-    BigInt result = BigInt();
+    BigInteger result = BigInteger();
     for (int i = 0; i < rhs.value.size(); ++i) {
         vector<char> current;
         for (int j = 0; j < i; ++j) {
@@ -119,16 +119,17 @@ const BigInt& BigInt::operator*=(BigInt const& rhs) {
         if (carry > 0) {
             current.push_back(carry);
         }
-        BigInt buff = BigInt();
+        BigInteger buff = BigInteger();
         buff.value = current;
         result += buff;
     }
     result.setSign(newSign);
     *this = result;
+    isZero();
     return *this;
 }
 
-bool operator ==(BigInt const& a, BigInt const& b) {
+bool operator ==(BigInteger const& a, BigInteger const& b) {
     bool sign1 = a.sign;
     bool sign2 = b.sign;
 
@@ -149,33 +150,33 @@ bool operator ==(BigInt const& a, BigInt const& b) {
     return true;
 }
 
-bool operator <=(BigInt const& a, BigInt const& b) {
+bool operator <=(BigInteger const& a, BigInteger const& b) {
     return ((a < b) || (a == b));
 }
 
-bool operator < (BigInt const& a, BigInt const& b) {
+bool operator < (BigInteger const& a, BigInteger const& b) {
     return (absoluteComparator(a, b) == -1);
 }
 
-bool operator >=(BigInt const& a, BigInt const& b) {
+bool operator >=(BigInteger const& a, BigInteger const& b) {
     return ((a > b) || (a == b));
 }
 
-bool operator > (BigInt const& a, BigInt const& b) {
+bool operator > (BigInteger const& a, BigInteger const& b) {
     return ((a != b) && !(a < b));
 }
 
-bool operator !=(BigInt const& a, BigInt const& b) {
+bool operator !=(BigInteger const& a, BigInteger const& b) {
     return !(a == b);
 }
 
-const BigInt BigInt::absolute() {
-    BigInt result = *this;
+const BigInteger BigInteger::absolute() {
+    BigInteger result = *this;
     result.setSign(true);
     return result;
 }
 
-bool BigInt::greater(BigInt a, BigInt b) {
+bool BigInteger::greater(BigInteger a, BigInteger b) {
     bool sign1 = a.getSign();
     bool sign2 = b.getSign();
 
@@ -216,30 +217,30 @@ bool BigInt::greater(BigInt a, BigInt b) {
     return false;
 }
 
-BigInt operator+(BigInt a, BigInt const& b) {
+BigInteger operator+(BigInteger a, BigInteger const& b) {
     return a += b;
 }
 
-BigInt operator-(BigInt a, BigInt const& b) {
+BigInteger operator-(BigInteger a, BigInteger const& b) {
     return a -= b;
 }
 
-BigInt operator*(BigInt a, BigInt const& b) {
+BigInteger operator*(BigInteger a, BigInteger const& b) {
     return a *= b;
 }
 
-std::istream& operator>>(std::istream &s, BigInt &a) {
+std::istream& operator>>(std::istream &s, BigInteger &a) {
     std::string tmp;
     s >> tmp;
-    a = BigInt(tmp);
+    a = BigInteger(tmp);
     return s;
 }
 
-std::ostream& operator<<(std::ostream &s, BigInt const& a) {
+std::ostream& operator<<(std::ostream &s, BigInteger const& a) {
     return s << to_string(a);
 }
 
-int absoluteComparator(BigInt const& a, BigInt const& b) {
+int absoluteComparator(BigInteger const& a, BigInteger const& b) {
     if (a.value.size() > b.value.size()) {
         return 1;
     } else if (a.value.size() < b.value.size()) {
@@ -256,7 +257,7 @@ int absoluteComparator(BigInt const& a, BigInt const& b) {
     return 0;
 }
 
-BigInt BigInt::add(BigInt const &rhs) {
+BigInteger BigInteger::add(BigInteger const &rhs) {
     char carry = 0;
     int index = 0;
     if (value.size() >= rhs.value.size()) {
@@ -296,9 +297,9 @@ BigInt BigInt::add(BigInt const &rhs) {
     return *this;
 }
 
-BigInt BigInt::sub(BigInt const &rhs) {
+BigInteger BigInteger::sub(BigInteger const &rhs) {
     //a >> b
-    BigInt b = rhs;
+    BigInteger b = rhs;
     for (int i = b.value.size(); i < value.size(); ++i) {
         b.value.push_back(0);
     }
@@ -315,4 +316,17 @@ BigInt BigInt::sub(BigInt const &rhs) {
         value.pop_back();
     }
     return *this;
+}
+
+bool BigInteger::isZero() {
+    for (int i = 0; i < value.size(); i++) {
+        if (value[i] != 0) {
+            return false;
+        }
+    }
+    value.clear();
+    value.push_back(0);
+    sign = true;
+    return true;
+    
 }

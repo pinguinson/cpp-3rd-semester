@@ -3,12 +3,12 @@ project(big_integer)
 
 set(SOURCE_FILES
     main.cpp
-    BigInt.cpp
+    BigInteger.cpp
     exception.cpp
     )
 
 set(HEADERS
-    BigInt.h
+    BigInteger.h
     )
 
 add_executable(big_integer ${SOURCE_FILES})

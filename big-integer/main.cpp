@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <time.h>
-#include "BigInt.h"
+#include "BigInteger.h"
 
 using namespace std;
 
@@ -21,11 +21,11 @@ bool testOneAdd() {
     int rhs = rand() % 1000000;
     rhs *= sign2;
     int ansInt = lhs + rhs;
-    BigInt bi1 = BigInt(lhs);
-    BigInt bi2 = BigInt(rhs);
+    BigInteger bi1 = BigInteger(lhs);
+    BigInteger bi2 = BigInteger(rhs);
     bi1 += bi2;
-    BigInt ans = BigInt(ansInt);
-    //cerr << lhs << " += " << rhs << " -> " << to_string(bi1) << endl;
+    BigInteger ans = BigInteger(ansInt);
+    cerr << lhs << " += " << rhs << " -> " << to_string(bi1) << endl;
     return to_string(bi1) == to_string(ans);
 }
 
@@ -43,11 +43,11 @@ bool testOneSub() {
     int rhs = rand() % 1000000;
     rhs *= sign2;
     int ansInt = lhs - rhs;
-    BigInt bi1 = BigInt(lhs);
-    BigInt bi2 = BigInt(rhs);
+    BigInteger bi1 = BigInteger(lhs);
+    BigInteger bi2 = BigInteger(rhs);
     bi1 -= bi2;
-    BigInt ans = BigInt(ansInt);
-    //cerr << lhs << " -= " << rhs << " -> " << to_string(bi1) << " ? " << to_string(ans) << endl;
+    BigInteger ans = BigInteger(ansInt);
+    cerr << lhs << " -= " << rhs << " -> " << to_string(bi1) << " ? " << to_string(ans) << endl;
     return to_string(bi1) == to_string(ans);
 }
 
@@ -65,11 +65,12 @@ bool testOneMul() {
     int rhs = rand() % 10000;
     rhs *= sign2;
     int ansInt = lhs * rhs;
-    BigInt bi1 = BigInt(lhs);
-    BigInt bi2 = BigInt(rhs);
+    BigInteger bi1 = BigInteger(lhs);
+    BigInteger bi2 = BigInteger(rhs);
     bi1 *= bi2;
-    BigInt ans = BigInt(ansInt);
-    //cerr << lhs << " * " << rhs << " = " << bi1 << " (" << ansInt << ")" << endl;
+    BigInteger ans = BigInteger(ansInt);
+    if (to_string(bi1) != to_string(ans))
+        cerr << lhs << " * " << rhs << " = " << bi1 << " (" << ansInt << ")" << endl;
     return to_string(bi1) == to_string(ans);
 }
 
@@ -101,8 +102,8 @@ void testMul(int number) {
 
 int main() {
     srand (time(NULL));
-    cout << BigInt(INT32_MIN) << endl;
+    cout << BigInteger(INT32_MIN) << endl;
     testAdd(1000);
     testSub(1000);
-    testMul(1000);
+    testMul(100000);
 }
