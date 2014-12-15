@@ -10,6 +10,10 @@ BigInteger::BigInteger() {
 }
 
 BigInteger::BigInteger(int a) {
+    if (a == 0) {
+        *this = BigInteger();
+        return;
+    }
     long long number = a;
     sign = number > 0;
     value.clear();
@@ -52,6 +56,9 @@ BigInteger::BigInteger(std::string number) {
         sign = false;
         end = 1;
     }
+    while (number[end] == '0') {
+        end++;
+    }
     for (int i = end; i < number.length(); i++) {
         char currentChar = number[i];
         if (!isdigit(currentChar))
@@ -60,6 +67,7 @@ BigInteger::BigInteger(std::string number) {
     for (int i = number.length() - 1; i >= end; i--) {
         value.push_back((char) (number[i] - 48));
     }
+    isZero();
 }
 
 BigInteger::BigInteger(BigInteger const &copy) {
@@ -75,13 +83,13 @@ const bool &BigInteger::getSign() {
     return sign;
 }
 
-const BigInteger& BigInteger::operator = (BigInteger const& other) {
+BigInteger& BigInteger::operator = (BigInteger const& other) {
     value = other.value;
     sign = other.sign;
     return *this;
 }
 
-const BigInteger& BigInteger::operator+=(BigInteger const& rhs) {
+BigInteger& BigInteger::operator+=(BigInteger const& rhs) {
     if (sign == rhs.sign) {
         add(rhs);
         return *this;
@@ -90,19 +98,23 @@ const BigInteger& BigInteger::operator+=(BigInteger const& rhs) {
         sub(rhs);
         return *this;
     }
+    if (absoluteComparator(*this, rhs) == 0) {
+        *this = BigInteger();
+        return *this;
+    }
     BigInteger buff = rhs;
     buff.sub(*this);
     *this = buff;
     return *this;
 }
 
-const BigInteger& BigInteger::operator-=(BigInteger const& rhs) {
+BigInteger& BigInteger::operator-=(BigInteger const& rhs) {
     BigInteger r = rhs;
     r.setSign(!r.getSign());
     return (*this) += r;
 }
 
-const BigInteger& BigInteger::operator*=(BigInteger const& rhs) {
+BigInteger& BigInteger::operator*=(BigInteger const& rhs) {
     bool newSign = (sign == rhs.sign);
     BigInteger result = BigInteger();
     for (int i = 0; i < rhs.value.size(); ++i) {
@@ -318,7 +330,7 @@ BigInteger BigInteger::sub(BigInteger const &rhs) {
     return *this;
 }
 
-bool BigInteger::isZero() {
+const bool BigInteger::isZero() {
     for (int i = 0; i < value.size(); i++) {
         if (value[i] != 0) {
             return false;
@@ -329,4 +341,20 @@ bool BigInteger::isZero() {
     sign = true;
     return true;
     
+}
+
+BigInteger BigInteger::operator+() const {
+    return *this;
+}
+
+BigInteger BigInteger::operator-() const {
+    BigInteger temp = *this;
+    if (!temp.isZero()) {
+        temp.sign = !temp.sign;
+    }
+    return temp;
+}
+
+BigInteger BigInteger::operator~() const {
+    return -(*this) - 1;
 }
